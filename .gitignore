@@ -3,3 +3,11 @@ _pycache__/
 *.pyc
 .env/
 .embeddings/
+day6_rag_local.py
+day7_pdf_rag.py
+embed_and_retrieve.py
+embeddings_demo.py
+faiss_retriever.py
+llm_chatbot.py
+load_and_chunk.py
+pdf_faiss_chunking_llm.py

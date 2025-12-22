@@ -8,3 +8,7 @@ python-dotenv
 flask
 numpy
 pandas
+openai
+accelerate
+sentencepiece
+pypdf 

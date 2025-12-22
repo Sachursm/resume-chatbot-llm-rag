@@ -1,0 +1,7 @@
+Cars are vehicles used for transportation.
+A car can be very fast depending on its engine.
+Vehicles need maintenance are repair.
+Fruits like apples and bananas are healthy.
+I like eating apples and orange.
+Machine learning is a field of artifical intelligence.
+I am learning Machine learning .
