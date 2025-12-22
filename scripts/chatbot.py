@@ -1,11 +1,11 @@
 # TERMINAL CHATBOT (MAIN FILE)
 
-from chatbot.pdf_loader import load_pdf_text
-from chatbot.chunking import chunk_by_lines
-from chatbot.retriever import FaissRetriever
-from chatbot.extractors import extract_name, extract_email, extract_phone, extract_skills
-from chatbot.llm_engine import LocalLLM
-from chatbot.utils import normalize_query
+from scripts.pdf_loader import load_pdf_text
+from scripts.chunking import chunk_by_lines
+from scripts.retriever import FaissRetriever
+from scripts.extractors import extract_name, extract_email, extract_phone, extract_skills
+from scripts.llm_engine import LocalLLM
+from scripts.utils import normalize_query
 
 PDF_PATH = "data/SACHU RETNA S M.pdf"
 
