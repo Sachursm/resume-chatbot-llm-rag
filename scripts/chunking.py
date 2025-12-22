@@ -1,3 +1,4 @@
+# Chunk Creation
 def chunk_by_lines(text: str, max_lines: int = 3) -> list[str]:
     lines = text.split("\n")
     chunks = []

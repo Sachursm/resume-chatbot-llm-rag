@@ -1,3 +1,4 @@
+# PDF Reading
 from pypdf import PdfReader
 
 def load_pdf_text(pdf_path: str) -> str: #return type string

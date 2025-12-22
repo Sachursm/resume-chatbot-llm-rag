@@ -1,3 +1,4 @@
+# Local LLM Wrapper
 from transformers import pipeline
 
 class LocalLLM:
