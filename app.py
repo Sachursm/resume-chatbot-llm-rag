@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, jsonify
 import os
-from isort import file
 from scripts.pdf_loader import load_pdf_text
 from scripts.chunking import chunk_by_lines
 from scripts.retriever import FaissRetriever
@@ -26,14 +25,14 @@ resume_text = ""
 
 @app.route("/", methods=["GET", "POST"])
 def upload():
-    global current_resume_name
-    current_resume_name = file.filename
-    global retriever, resume_text
+    global retriever, resume_text, current_resume_name
 
     if request.method == "POST":
         file = request.files["resume"]
         if not file:
             return "No file uploaded"
+
+        current_resume_name = file.filename   # ✅ moved here
 
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
         path = os.path.join(UPLOAD_FOLDER, file.filename)
@@ -56,6 +55,7 @@ def upload():
         return redirect("/chat")
 
     return render_template("upload.html")
+
 
 
 @app.route("/chat", methods=["GET", "POST"])
