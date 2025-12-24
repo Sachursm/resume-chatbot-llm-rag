@@ -1,28 +1,45 @@
-function sendQuestion() {
-    const input = document.getElementById("question");
+const chatBox = document.getElementById("chat-box");
+const input = document.getElementById("question");
+
+function appendMessage(text, sender) {
+    const msg = document.createElement("div");
+    msg.className = `message ${sender}`;
+
+    const content = document.createElement("div");
+    content.className = "message-content";
+    content.innerHTML = text.replace(/\n/g, "<br>");
+
+    msg.appendChild(content);
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+async function sendQuestion() {
     const question = input.value.trim();
     if (!question) return;
 
-    fetch("/chat", {
+    appendMessage(question, "user");
+    input.value = "";
+
+    // Typing indicator
+    const typing = document.createElement("div");
+    typing.className = "message bot";
+    typing.innerHTML = `
+        <div class="typing-indicator">
+            <span></span><span></span><span></span>
+        </div>
+    `;
+    chatBox.appendChild(typing);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    const res = await fetch("/chat", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question })
-    })
-    .then(res => res.json())
-    .then(data => {
-        const chatBox = document.getElementById("chat-box");
-        chatBox.innerHTML = "";
-
-        data.history.forEach(msg => {
-            chatBox.innerHTML += `
-                <div class="user">You: ${msg.user}</div>
-                <div class="bot">Bot: ${msg.bot}</div>
-            `;
-        });
-
-        input.value = "";
-        chatBox.scrollTop = chatBox.scrollHeight;
     });
+
+    const data = await res.json();
+
+    chatBox.removeChild(typing);
+    appendMessage(data.answer, "bot");
 }

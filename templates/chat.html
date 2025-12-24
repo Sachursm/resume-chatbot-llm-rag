@@ -52,9 +52,32 @@
             border-radius: 20px 20px 0 0;
         }
 
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
         .header h2 {
             font-size: 24px;
-            margin-bottom: 8px;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-2px);
         }
 
         .resume-info {
@@ -159,7 +182,7 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        button {
+        .send-button {
             padding: 14px 30px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -172,12 +195,12 @@
             white-space: nowrap;
         }
 
-        button:hover {
+        .send-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
 
-        button:active {
+        .send-button:active {
             transform: translateY(0);
         }
 
@@ -244,7 +267,7 @@
                 max-width: 85%;
             }
 
-            button {
+            .send-button {
                 padding: 14px 24px;
             }
         }
@@ -253,7 +276,10 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>💬 Resume Chatbot</h2>
+            <div class="header-top">
+                <h2>💬 Resume Chatbot</h2>
+                <button class="back-button" onclick="goBack()">⬅ Back</button>
+            </div>
             <div class="resume-info">
                 <span>📄 Current Resume:</span>
                 <span class="resume-badge">{{ resume_name }}</span>
@@ -264,10 +290,15 @@
 
         <div class="input-area">
             <input type="text" id="question" placeholder="Ask a question about the resume..." />
-            <button onclick="sendQuestion()">Send</button>
+            <button class="send-button" onclick="sendQuestion()">Send</button>
         </div>
     </div>
 
     <script src="/static/chat.js"></script>
+    <script>
+        function goBack() {
+            window.location.href = "/";
+        }
+    </script>
 </body>
 </html>
