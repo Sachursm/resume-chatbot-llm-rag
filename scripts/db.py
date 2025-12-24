@@ -11,7 +11,7 @@ def init_db():
 
     cur.execute("""
                 CREATE TABLE IF NOT EXISTS resumes(
-                id INTEDER PRIMARY KEY AUTOINREMENT,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 filename TEXT,
                 text TEXT
                 )

@@ -1,14 +1,16 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 import os
-
+from isort import file
 from scripts.pdf_loader import load_pdf_text
 from scripts.chunking import chunk_by_lines
 from scripts.retriever import FaissRetriever
 from scripts.llm_engine import LocalLLM
 from scripts.utils import normalize_query
 from scripts.extractors import extract_name, extract_email, extract_phone, extract_skills
+from scripts.db import get_connection, init_db
 
-from db import get_connection, init_db
+chat_history = []
+current_resume_name = ""
 
 UPLOAD_FOLDER = "data/uploads"
 
@@ -24,6 +26,8 @@ resume_text = ""
 
 @app.route("/", methods=["GET", "POST"])
 def upload():
+    global current_resume_name
+    current_resume_name = file.filename
     global retriever, resume_text
 
     if request.method == "POST":
@@ -57,35 +61,43 @@ def upload():
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
     if request.method == "POST":
-        query = request.form["question"]
+        data = request.get_json()
+        query = data.get("question", "")
         query_norm = normalize_query(query)
 
-        # Rule-based
+        # Rule-based answers
         if "name" in query_norm:
-            return extract_name(resume_text)
+            answer = extract_name(resume_text)
 
-        if "email" in query_norm:
-            return extract_email(resume_text)
+        elif "email" in query_norm:
+            answer = extract_email(resume_text)
 
-        if "phone" in query_norm:
-            return extract_phone(resume_text)
+        elif "phone" in query_norm:
+            answer = extract_phone(resume_text)
 
-        if "skill" in query_norm:
+        elif "skill" in query_norm:
             skills = extract_skills(resume_text)
-            return "<br>".join(skills)
+            answer = "\n".join(skills)
 
-        # RAG
-        context_chunks = retriever.retrieve(query_norm)
+        else:
+            context_chunks = retriever.retrieve(query_norm)
+            if not context_chunks:
+                answer = "I don't know based on the document."
+            else:
+                context = "\n".join(context_chunks)
+                answer = llm.answer(context, query)
 
-        if not context_chunks:
-            return "I don't know based on the document."
+        chat_history.append({"user": query, "bot": answer})
 
-        context = "\n".join(context_chunks)
-        answer = llm.answer(context, query)
+        return jsonify({
+            "answer": answer,
+            "history": chat_history
+        })
 
-        return answer
-
-    return render_template("chat.html")
+    return render_template(
+        "chat.html",
+        resume_name=current_resume_name
+    )
 
 
 if __name__ == "__main__":
