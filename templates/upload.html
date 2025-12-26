@@ -1,0 +1,13 @@
+<h2>Upload Resume</h2>
+
+<form method="POST" enctype="multipart/form-data">
+  <input type="file" name="resume" required>
+  <button type="submit">Upload</button>
+</form>
+
+<h3>Existing Resumes</h3>
+<ul>
+{% for r in resumes %}
+<li><a href="/chat/{{r[0]}}">{{r[1]}}</a></li>
+{% endfor %}
+</ul>

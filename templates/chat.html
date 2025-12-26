@@ -1,0 +1,22 @@
+<h2>Resume Chatbot</h2>
+<p>Current Resume: {{resume_name}}</p>
+
+<div id="chat"></div>
+
+<input id="q" placeholder="Ask something...">
+<button onclick="ask()">Send</button>
+
+<script>
+function ask(){
+ let q=document.getElementById("q").value;
+
+ fetch("/chat/{{resume_id}}",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({question:q})
+ }).then(r=>r.json()).then(d=>{
+  document.getElementById("chat").innerHTML+=
+   "<p><b>You:</b> "+q+"</p><p><b>Bot:</b> "+d.answer+"</p>";
+ });
+}
+</script>
