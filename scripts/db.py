@@ -13,20 +13,20 @@ def init_db():
     cur = conn.cursor()
 
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS resumes(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            filename TEXT,
-            text TEXT
-        )
+    CREATE TABLE IF NOT EXISTS resumes(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        filename TEXT,
+        text TEXT
+    )
     """)
 
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS chat_history(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            resume_id INTEGER,
-            question TEXT,
-            answer TEXT
-        )
+    CREATE TABLE IF NOT EXISTS chat_history(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        resume_id INTEGER,
+        question TEXT,
+        answer TEXT
+    )
     """)
 
     conn.commit()

@@ -7,7 +7,22 @@
 
 <h3>Existing Resumes</h3>
 <ul>
-{% for r in resumes %}
-<li><a href="/chat/{{r[0]}}">{{r[1]}}</a></li>
-{% endfor %}
+  {% for r in resumes %}
+  <li>
+    {{ r[1] }}
+
+    <!-- Open Chat -->
+    <a href="/chat/{{ r[0] }}" 
+       style="margin-left:10px; padding:4px 8px; background:#4CAF50; color:white; border-radius:5px; text-decoration:none;">
+       💬 Open Chat
+    </a>
+
+    <!-- Delete Button -->
+    <a href="/delete/{{ r[0] }}" 
+       onclick="return confirm('Delete this resume and all its chats?');"
+       style="margin-left:6px; padding:4px 8px; background:#E53935; color:white; border-radius:5px; text-decoration:none;">
+       ❌ Delete
+    </a>
+  </li>
+  {% endfor %}
 </ul>

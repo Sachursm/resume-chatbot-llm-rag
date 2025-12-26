@@ -1,22 +1,38 @@
-<h2>Resume Chatbot</h2>
-<p>Current Resume: {{resume_name}}</p>
+<h1>Resume Chatbot</h1>
 
-<div id="chat"></div>
+<p><b>Current Resume:</b> {{ resume_name }}</p>
 
-<input id="q" placeholder="Ask something...">
-<button onclick="ask()">Send</button>
+{% for chat in chat_history %}
+<p><b>You:</b> {{ chat.user }}</p>
+<p><b>Bot:</b> {{ chat.bot }}</p>
+{% endfor %}
 
+<input id="question" placeholder="Ask something...">
+<button onclick="send()">Send</button>
+<a href="/" 
+   style="
+      display:inline-block;
+      background:#4CAF50;
+      color:white;
+      padding:8px 14px;
+      border-radius:6px;
+      text-decoration:none;
+      font-weight:bold;
+      margin-bottom:10px;
+   ">
+   ➕ New Chat
+</a>
 <script>
-function ask(){
- let q=document.getElementById("q").value;
+function send() {
+    let q = document.getElementById("question").value;
 
- fetch("/chat/{{resume_id}}",{
-  method:"POST",
-  headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({question:q})
- }).then(r=>r.json()).then(d=>{
-  document.getElementById("chat").innerHTML+=
-   "<p><b>You:</b> "+q+"</p><p><b>Bot:</b> "+d.answer+"</p>";
- });
+    fetch("", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({question: q})
+    })
+    .then(r => r.json())
+    .then(d => location.reload());
 }
+
 </script>

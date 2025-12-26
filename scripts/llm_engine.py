@@ -11,11 +11,14 @@ class LocalLLM:
 
     def answer(self, context: str, query: str) -> str:
         prompt = f"""
-You are a helpful assistant answering questions about a resume.
+You are a resume assistant.
+Answer ONLY using the provided resume context.
+If not in resume, say "Not available in resume".
 
-Use ONLY the information provided below.
-If not present, say:
-"I don't know based on the document."
+
+Resume Context:
+{context}
+
 
 Context:
 {context}

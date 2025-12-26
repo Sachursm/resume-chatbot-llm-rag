@@ -38,29 +38,47 @@ def extract_skills(text: str):
 
     return skills
 
-def extract_company(text):
-    text_lower = text.lower()
+import re
 
-    # Common headings seen in resumes
-    patterns = [
-        r"company[:\-]\s*(.*)",
-        r"organisation[:\-]\s*(.*)",
-        r"organization[:\-]\s*(.*)",
-        r"work experience[:\-]\s*((.|\n)*?)\n\n",
-        r"experience[:\-]\s*((.|\n)*?)\n\n"
+def extract_company(resume_text):
+    text = resume_text
+
+    # Normalize spaces
+    text = re.sub(r'\s+', ' ', text)
+
+    # Extract Professional Experience block
+    match = re.search(
+        r'(PROFESSIONAL EXPERIENCE.*?SKILLS|PROFESSIONAL EXPERIENCE.*?$)',
+        text,
+        re.IGNORECASE
+    )
+
+    if not match:
+        return "Company not found"
+
+    exp_section = match.group(1)
+
+    # Debug (optional)
+    # print("\n---- EXPERIENCE SECTION ----\n", exp_section[:400])
+
+    # Common pattern → Job Title\nCOMPANY NAME
+    company_regex_patterns = [
+        r'\b([A-Z][A-Z\s&]+TECHNOLOGIES)\b',      # CYSONET TECHNOLOGIES like uppercase companies
+        r'\b([A-Z][A-Z\s&]+PVT LTD)\b',
+        r'\b([A-Z][A-Z\s&]+LIMITED)\b',
+        r'[A-Z][A-Za-z\s&]+ Technologies',
+        r'[A-Z][A-Za-z\s&]+ Pvt Ltd',
+        r'[A-Z][A-Za-z\s&]+ Limited',
     ]
 
-    for pattern in patterns:
-        match = re.search(pattern, text, re.IGNORECASE)
-        if match:
-            result = match.group(1).strip()
-            if len(result) > 3:
-                return result
+    for pattern in company_regex_patterns:
+        company = re.search(pattern, exp_section)
+        if company:
+            return company.group(1).strip()
 
-    # fallback if company appears in bullet list section
-    lines = text.split("\n")
-    for line in lines:
-        if "company" in line.lower() or "experience" in line.lower():
-            return line.strip()
+    # Fallback: first uppercase line
+    fallback = re.search(r'\b([A-Z][A-Z\s]{3,})\b', exp_section)
+    if fallback:
+        return fallback.group(1).strip()
 
-    return "Company / Experience information not found"
+    return "Company not found"
