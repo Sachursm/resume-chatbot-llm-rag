@@ -11,3 +11,4 @@ faiss_retriever.py
 llm_chatbot.py
 load_and_chunk.py
 pdf_faiss_chunking_llm.py
+*.gguf

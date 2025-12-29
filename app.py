@@ -15,9 +15,8 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 init_db()
+llm = None
 
-llm = LocalLLM()      # <-- LOAD ONLY ONCE 🔥
-print("Mistral Loaded Successfully")
 
 retriever = None
 resume_text = ""
@@ -156,6 +155,12 @@ def chat(resume_id):
 
                 answer = extract_company(resume_text)
         else:
+            global llm
+            if llm is None:
+                print("Loading LLM first time…")
+                llm = LocalLLM()
+                print("Mistral Loaded Successfully")
+
             context = retriever.retrieve(q, k=5)
 
             if not context:
@@ -208,4 +213,4 @@ def delete_resume(resume_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)

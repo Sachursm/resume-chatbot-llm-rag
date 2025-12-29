@@ -167,6 +167,19 @@
       justify-content: flex-end;
       margin-bottom: 8px;
       align-items: flex-end;
+      gap: 8px;
+    }
+
+    .message-user .message-label {
+      font-size: 11px;
+      font-weight: 700;
+      opacity: 0.6;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #ffffff;
+      white-space: nowrap;
+      align-self: flex-end;
+      margin-bottom: 2px;
     }
 
     .message-user .bubble {
@@ -182,17 +195,31 @@
       font-size: 15px;
       line-height: 1.5;
       display: inline-block;
-      white-space: nowrap;
+      white-space: pre-wrap;
       width: fit-content;
-      min-width: max-content;
       max-width: 85%;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     .message-bot {
       display: flex;
       justify-content: flex-start;
       margin-bottom: 20px;
-      align-items: flex-start;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .message-bot .message-label {
+      font-size: 11px;
+      font-weight: 700;
+      opacity: 0.6;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #ffffff;
+      white-space: nowrap;
+      align-self: flex-end;
+      margin-bottom: 2px;
     }
 
     .message-bot .bubble {
@@ -210,8 +237,7 @@
       display: inline-block;
       white-space: pre-wrap;
       width: fit-content;
-      min-width: max-content;
-      max-width: 700px;
+      max-width: 85%;
       word-wrap: break-word;
       overflow-wrap: break-word;
     }
@@ -286,18 +312,6 @@
       opacity: 0.6;
       letter-spacing: 0.5px;
       text-transform: uppercase;
-    }
-
-    .message-user .message-label {
-      text-align: right;
-      color: #ffffff;
-      margin-right: 4px;
-    }
-
-    .message-bot .message-label {
-      text-align: left;
-      color: #ffffff;
-      margin-left: 4px;
     }
 
     .empty-chat {
@@ -491,16 +505,12 @@
         {% for chat in chat_history %}
         <div class="message">
           <div class="message-user">
-            <div>
-              <div class="message-label">YOU</div>
-              <div class="bubble">{{ chat.user }}</div>
-            </div>
+            <div class="message-label">YOU</div>
+            <div class="bubble">{{ chat.user }}</div>
           </div>
           <div class="message-bot">
-            <div>
-              <div class="message-label">BOT</div>
-              <div class="bubble">{{ chat.bot }}</div>
-            </div>
+            <div class="message-label">BOT</div>
+            <div class="bubble">{{ chat.bot }}</div>
           </div>
         </div>
         {% endfor %}
