@@ -24,7 +24,35 @@ class LocalLLM:
         return text.replace("</s>", "").strip()
 
     def _prompt(self, context: str, question: str) -> str:
-        return f"""
+        q_lower = question.lower()
+
+        # -------- SUMMARY MODE -------- #
+        if "summary" in q_lower or "summarize" in q_lower or "overview" in q_lower:
+            return f"""
+    <s>[INST]
+    You are a Resume Assistant.
+
+    The user is asking for a SUMMARY of the resume.
+
+    RULES:
+    - Read the RESUME below.
+    - Write a meaningful human-like summary in your own words.
+    - Capture key experience, skills, and expertise.
+    - DO NOT invent fake companies, roles, or achievements.
+    - If resume has too little info, tell that summary cannot be generated.
+
+    RESUME:
+    {context}
+
+    QUESTION:
+    {question}
+
+    Provide a clear professional summary:
+    [/INST]
+"""
+
+    # -------- NORMAL QA MODE (default) -------- #
+    return f"""
 <s>[INST]
 You are a Resume Q&A Assistant.
 
@@ -43,6 +71,7 @@ QUESTION:
 Answer:
 [/INST]
 """
+
 
     # -------------------- MAIN ANSWER FUNCTION -------------------- #
     def answer(self, context: str, question: str, use_cache=True) -> str:
