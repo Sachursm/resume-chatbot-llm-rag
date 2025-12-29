@@ -1,28 +1,613 @@
-<h2>Upload Resume</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Manager</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<form method="POST" enctype="multipart/form-data">
-  <input type="file" name="resume" required>
-  <button type="submit">Upload</button>
-</form>
+    body {
+      background: #0a0a0a;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 40px 20px;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
 
-<h3>Existing Resumes</h3>
-<ul>
-  {% for r in resumes %}
-  <li>
-    {{ r[1] }}
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, 0.02) 49%, rgba(255, 255, 255, 0.02) 51%, transparent 52%),
+        linear-gradient(-45deg, transparent 48%, rgba(255, 255, 255, 0.02) 49%, rgba(255, 255, 255, 0.02) 51%, transparent 52%);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-    <!-- Open Chat -->
-    <a href="/chat/{{ r[0] }}" 
-       style="margin-left:10px; padding:4px 8px; background:#4CAF50; color:white; border-radius:5px; text-decoration:none;">
-       💬 Open Chat
-    </a>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
 
-    <!-- Delete Button -->
-    <a href="/delete/{{ r[0] }}" 
-       onclick="return confirm('Delete this resume and all its chats?');"
-       style="margin-left:6px; padding:4px 8px; background:#E53935; color:white; border-radius:5px; text-decoration:none;">
-       ❌ Delete
-    </a>
-  </li>
-  {% endfor %}
-</ul>
+    h2 {
+      color: #ffffff;
+      font-size: 32px;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    h3 {
+      color: #ffffff;
+      font-size: 24px;
+      margin: 40px 0 20px 0;
+      font-weight: 600;
+    }
+
+    /* Main Header Styles */
+    .main-header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding: 50px 20px;
+      background: #0f0f0f;
+      border-radius: 20px;
+      box-shadow: 
+        0 0 40px rgba(255, 255, 255, 0.1),
+        inset 0 0 60px rgba(255, 255, 255, 0.03);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .main-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.03) 50%,
+        transparent 70%
+      );
+      animation: shine 6s infinite linear;
+    }
+
+    @keyframes shine {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .main-header h1 {
+      color: #ffffff;
+      font-size: 56px;
+      font-weight: 900;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+      text-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.5),
+        0 0 40px rgba(255, 255, 255, 0.3),
+        0 4px 8px rgba(0, 0, 0, 0.8);
+      letter-spacing: 2px;
+    }
+
+    .rag-badge {
+      background: #ffffff;
+      color: #0a0a0a;
+      padding: 10px 25px;
+      border-radius: 30px;
+      font-size: 22px;
+      font-weight: 900;
+      box-shadow: 
+        0 0 30px rgba(255, 255, 255, 0.6),
+        0 0 60px rgba(255, 255, 255, 0.4),
+        inset 0 0 20px rgba(255, 255, 255, 0.2);
+      animation: glowPulse 2s infinite;
+      letter-spacing: 1px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        box-shadow: 
+          0 0 30px rgba(255, 255, 255, 0.6),
+          0 0 60px rgba(255, 255, 255, 0.4),
+          inset 0 0 20px rgba(255, 255, 255, 0.2);
+        transform: scale(1);
+      }
+      50% {
+        box-shadow: 
+          0 0 40px rgba(255, 255, 255, 0.8),
+          0 0 80px rgba(255, 255, 255, 0.6),
+          inset 0 0 30px rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+    }
+
+    .subtitle {
+      color: #c0c0c0;
+      font-size: 17px;
+      font-weight: 400;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Upload Form Styles */
+    .upload-section {
+      background: #0f0f0f;
+      padding: 35px;
+      border-radius: 16px;
+      box-shadow: 
+        0 0 40px rgba(255, 255, 255, 0.08),
+        inset 0 0 40px rgba(255, 255, 255, 0.02);
+      margin-bottom: 40px;
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-section::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+      animation: slideRight 3s infinite;
+    }
+
+    @keyframes slideRight {
+      0% {
+        left: -100%;
+      }
+      100% {
+        left: 100%;
+      }
+    }
+
+    form {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    input[type="file"] {
+      flex: 1;
+      min-width: 250px;
+      padding: 12px 16px;
+      background: #1a1a1a;
+      color: #f0f0f0;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    input[type="file"]::file-selector-button {
+      background: #ffffff;
+      color: #0a0a0a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 12px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    }
+
+    input[type="file"]::file-selector-button:hover {
+      background: #f0f0f0;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+    }
+
+    input[type="file"]:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    button[type="submit"] {
+      padding: 12px 28px;
+      background: #ffffff;
+      color: #0a0a0a;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.4),
+        0 4px 8px rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 1;
+    }
+
+    button[type="submit"]:hover {
+      background: #f0f0f0;
+      transform: translateY(-3px);
+      box-shadow: 
+        0 0 30px rgba(255, 255, 255, 0.6),
+        0 6px 12px rgba(0, 0, 0, 0.6);
+    }
+
+    /* PDF Preview */
+    .pdf-preview {
+      margin-top: 20px;
+      background: #3a3a3a;
+      padding: 20px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .pdf-preview.active {
+      display: block;
+    }
+
+    .pdf-preview h4 {
+      color: #ffffff;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+
+    .pdf-preview iframe {
+      width: 100%;
+      height: 500px;
+      border: 2px solid #4a4a4a;
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    /* Resume List Styles */
+    .resume-list {
+      background: #0f0f0f;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 
+        0 0 40px rgba(255, 255, 255, 0.08),
+        inset 0 0 40px rgba(255, 255, 255, 0.02);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      overflow: visible;
+    }
+
+    ul {
+      list-style: none;
+      overflow: visible;
+    }
+
+    li {
+      background: #1a1a1a;
+      padding: 20px 22px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: visible;
+    }
+
+    li:last-child {
+      margin-bottom: 0;
+    }
+
+    li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.5) 100%);
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+    }
+
+    li:hover {
+      background: #222;
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateX(8px);
+      box-shadow: 
+        0 0 30px rgba(255, 255, 255, 0.1),
+        -8px 0 20px rgba(255, 255, 255, 0.05);
+    }
+
+    li:hover::before {
+      transform: scaleY(1);
+    }
+
+    .resume-name {
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 500;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .resume-name::before {
+      content: "📄";
+      font-size: 20px;
+    }
+
+    /* Three Dots Menu */
+    .menu-container {
+      position: relative;
+      z-index: 100;
+    }
+
+    .menu-button {
+      background: none;
+      border: none;
+      color: #f0f0f0;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      line-height: 1;
+    }
+
+    .menu-button:hover {
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    }
+
+    .menu-dropdown {
+      position: absolute;
+      right: 0;
+      bottom: calc(100% + 8px);
+      background: #1a1a1a;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      min-width: 180px;
+      box-shadow: 
+        0 0 40px rgba(255, 255, 255, 0.25),
+        0 -8px 20px rgba(0, 0, 0, 0.8);
+      display: none;
+      z-index: 9999;
+      overflow: visible;
+    }
+
+    .menu-dropdown.active {
+      display: block;
+      animation: slideDown 0.2s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .menu-item {
+      display: block;
+      padding: 14px 18px;
+      color: #f0f0f0;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      border: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      background: none;
+      font-weight: 600;
+    }
+
+    .menu-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      padding-left: 22px;
+    }
+
+    .menu-item.chat {
+      color: #ffffff;
+    }
+
+    .menu-item.delete {
+      color: #ffffff;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #888;
+    }
+
+    .empty-state::before {
+      content: "📭";
+      font-size: 64px;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .main-header h1 {
+        font-size: 32px;
+      }
+
+      .rag-badge {
+        font-size: 16px;
+        padding: 6px 16px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+
+      li {
+        flex-direction: row;
+      }
+
+      form {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      input[type="file"],
+      button[type="submit"] {
+        width: 100%;
+      }
+
+      .pdf-preview iframe {
+        height: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="main-header">
+      <h1>Resume Checker <span class="rag-badge">RAG Based</span></h1>
+      <p class="subtitle">Intelligent Resume Analysis powered by Retrieval-Augmented Generation</p>
+    </header>
+
+    <div class="upload-section">
+      <h2>Upload Resume</h2>
+      <form method="POST" enctype="multipart/form-data" id="uploadForm">
+        <input type="file" name="resume" accept=".pdf,.doc,.docx" required id="fileInput">
+        <button type="submit">📤 Upload</button>
+      </form>
+      
+      <div class="pdf-preview" id="pdfPreview">
+        <h4>📄 Preview</h4>
+        <iframe id="pdfFrame"></iframe>
+      </div>
+    </div>
+
+    <div class="resume-list">
+      <h3>Existing Resumes</h3>
+      <ul>
+        {% if resumes %}
+          {% for r in resumes %}
+          <li>
+            <span class="resume-name" onclick="window.location.href='/chat/{{ r[0] }}'" style="cursor: pointer;">{{ r[1] }}</span>
+            <div class="menu-container">
+              <button class="menu-button" onclick="toggleMenu(event, 'menu-{{ r[0] }}')">⋮</button>
+              <div class="menu-dropdown" id="menu-{{ r[0] }}">
+                <a href="/chat/{{ r[0] }}" class="menu-item chat">
+                  💬 Open Chat
+                </a>
+                <a href="/delete/{{ r[0] }}" 
+                   onclick="return confirm('Delete this resume and all its chats?');"
+                   class="menu-item delete">
+                  ❌ Delete
+                </a>
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <p>No resumes uploaded yet. Upload your first resume to get started!</p>
+          </div>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // PDF Preview functionality
+    const fileInput = document.getElementById('fileInput');
+    const pdfPreview = document.getElementById('pdfPreview');
+    const pdfFrame = document.getElementById('pdfFrame');
+
+    fileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file && file.type === 'application/pdf') {
+        const fileURL = URL.createObjectURL(file);
+        pdfFrame.src = fileURL;
+        pdfPreview.classList.add('active');
+      } else if (file) {
+        // For non-PDF files, show a message
+        pdfPreview.classList.add('active');
+        pdfFrame.srcdoc = `
+          <html>
+            <body style="display: flex; align-items: center; justify-content: center; height: 100%; margin: 0; font-family: Arial; background: #f5f5f5;">
+              <div style="text-align: center;">
+                <h2 style="color: #333;">📄 ${file.name}</h2>
+                <p style="color: #666;">Preview not available for this file type</p>
+                <p style="color: #999; font-size: 14px;">File will be uploaded when you click the Upload button</p>
+              </div>
+            </body>
+          </html>
+        `;
+      } else {
+        pdfPreview.classList.remove('active');
+      }
+    });
+
+    // Three dots menu functionality
+    function toggleMenu(event, menuId) {
+      event.stopPropagation();
+      const menu = document.getElementById(menuId);
+      
+      // Close all other menus
+      document.querySelectorAll('.menu-dropdown').forEach(m => {
+        if (m.id !== menuId) {
+          m.classList.remove('active');
+        }
+      });
+      
+      // Toggle current menu
+      menu.classList.toggle('active');
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!event.target.closest('.menu-container')) {
+        document.querySelectorAll('.menu-dropdown').forEach(m => {
+          m.classList.remove('active');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

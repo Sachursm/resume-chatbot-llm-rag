@@ -4,10 +4,11 @@ import os
 from scripts.pdf_loader import load_pdf_text
 from scripts.chunking import chunk_by_lines
 from scripts.retriever import FaissRetriever
-from scripts.llm_engine import LocalLLM
+from scripts.llm_mistral import LocalLLM
 from scripts.utils import normalize_query
 from scripts.extractors import *
 from scripts.db import *
+
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
@@ -15,7 +16,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 init_db()
 
-llm = LocalLLM()
+llm = LocalLLM()      # <-- LOAD ONLY ONCE 🔥
+print("Mistral Loaded Successfully")
+
 retriever = None
 resume_text = ""
 
@@ -140,15 +143,20 @@ def chat(resume_id):
         elif "skill" in q:
             skills = extract_skills(resume_text)
             answer = "\n".join(skills) if skills else "No skills found"
-        elif ("company" in q 
-            or "experience" in q 
-            or "company name" in q 
-            or "previous work" in q 
-            or "work experience" in q):
-            answer = extract_company(resume_text)
-                
+        elif (
+                    "company" in q
+                    or "previous experience" in q
+                    or "company name" in q
+                    or "previous work" in q
+                    or "worked at" in q
+                    or "work history" in q
+                    or "employer" in q
+                    or "previous organizations" in q
+                ):
+
+                answer = extract_company(resume_text)
         else:
-            context = retriever.retrieve(q)
+            context = retriever.retrieve(q, k=5)
 
             if not context:
                 answer = "I don't know based on the document."
