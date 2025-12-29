@@ -11,4 +11,5 @@ pandas
 openai
 accelerate
 sentencepiece
-pypdf 
+pypdf2
+llama-cpp-python
