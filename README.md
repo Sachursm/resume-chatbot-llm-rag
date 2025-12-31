@@ -259,4 +259,5 @@ This project is open-source.
 
 ## 🔗 Links
 
-* [GitHub Repository](https://github.com/YOUR_USERNAME/resume-chatbot)
+* [GitHub Repository](https://github.com/Sachursm/resume-chatbot-llm-rag.git)
+
