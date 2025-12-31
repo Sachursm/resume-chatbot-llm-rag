@@ -163,7 +163,7 @@ Upload a resume → Start chatting 🎉
 * `/screenshots/home.png`
   ![Home page](https://github.com/Sachursm/resume-chatbot-llm-rag/blob/d2038739b02218e49301d10e3876292ff1d57ed6/upload.png)
 * `/screenshots/chat.png`
-
+  ![Chat page](https://github.com/Sachursm/resume-chatbot-llm-rag/blob/1fb004bde65211e1ce58b7e61694b83a82e41959/chat.png)
 ---
 
 ## 📂 Project Structure
@@ -260,5 +260,6 @@ This project is open-source.
 ## 🔗 Links
 
 * [GitHub Repository](https://github.com/Sachursm/resume-chatbot-llm-rag.git)
+
 
 
