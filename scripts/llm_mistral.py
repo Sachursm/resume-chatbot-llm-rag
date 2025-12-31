@@ -12,7 +12,7 @@ class LocalLLM:
             model_path=model_path or default_path,
             n_ctx=4096,
             n_threads=6,
-            n_gpu_layers=0,       # Change to >0 if GPU
+            n_gpu_layers=0,       # Change to >0 if GPU available
             verbose=False
         )
 
@@ -29,30 +29,30 @@ class LocalLLM:
         # -------- SUMMARY MODE -------- #
         if "summary" in q_lower or "summarize" in q_lower or "overview" in q_lower:
             return f"""
-    <s>[INST]
-    You are a Resume Assistant.
+<s>[INST]
+You are a Resume Assistant.
 
-    The user is asking for a SUMMARY of the resume.
+The user is asking for a SUMMARY of the resume.
 
-    RULES:
-    - Read the RESUME below.
-    - Write a meaningful human-like summary in your own words.
-    - Capture key experience, skills, and expertise.
-    - DO NOT invent fake companies, roles, or achievements.
-    - If resume has too little info, tell that summary cannot be generated.
+RULES:
+- Read the RESUME below.
+- Write a meaningful human-like summary in your own words.
+- Capture key experience, skills, and expertise.
+- DO NOT invent fake companies, roles, or achievements.
+- If resume has too little info, tell that summary cannot be generated.
 
-    RESUME:
-    {context}
+RESUME:
+{context}
 
-    QUESTION:
-    {question}
+QUESTION:
+{question}
 
-    Provide a clear professional summary:
-    [/INST]
+Provide a clear professional summary:
+[/INST]
 """
 
-    # -------- NORMAL QA MODE (default) -------- #
-    return f"""
+        # -------- NORMAL QA MODE (default) -------- #
+        return f"""
 <s>[INST]
 You are a Resume Q&A Assistant.
 
@@ -71,7 +71,6 @@ QUESTION:
 Answer:
 [/INST]
 """
-
 
     # -------------------- MAIN ANSWER FUNCTION -------------------- #
     def answer(self, context: str, question: str, use_cache=True) -> str:
@@ -106,6 +105,3 @@ Answer:
     # optional helper if needed later
     def clear_cache(self):
         self.cache.clear()
-
-
-
